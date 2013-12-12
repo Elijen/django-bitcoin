@@ -90,13 +90,8 @@ def bitcoin_payment_qr(address, amount=Decimal("0"), description='', display_cur
     currency_amount=Decimal(0)
     if display_currency:
         currency_amount=(Decimal(amount)*currency.exchange.get_rate(display_currency)).quantize(Decimal("0.01"))
-    try:
-        image_url = reverse('qrcode', args=('dummy',))
-    except NoReverseMatch,e:
-        raise ImproperlyConfigured('Make sure you\'ve included django_bitcoin.urls')
-    qr = "bitcoin:"+address+("", "?amount="+str(amount))[amount>0]
-    qr = urllib.quote(qr)
-    address_qrcode = reverse('qrcode', args=(qr,))
+
+    address_qrcode = bitcoin_qrcode_url(address, amount)
     return {'address': address, 
             'address_qrcode': address_qrcode,
             'amount': amount, 
@@ -104,3 +99,16 @@ def bitcoin_payment_qr(address, amount=Decimal("0"), description='', display_cur
             'display_currency': display_currency,
             'currency_amount': currency_amount,
             }
+
+@register.filter
+def bitcoin_qrcode_url(address, amount=0):
+    qr_text = get_qr_text(address, amount)
+    return reverse('qrcode', args=(qr_text,))
+
+
+def get_qr_text(address, amount=0):
+    qr_text = "bitcoin:" + address
+    if amount > 0:
+        qr_text += "?amount=" + str(amount)
+
+    return qr_text
