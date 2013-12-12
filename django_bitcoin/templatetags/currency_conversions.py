@@ -100,7 +100,8 @@ def bitcoin_payment_qr(address, amount=Decimal("0"), description='', display_cur
             'currency_amount': currency_amount,
             }
 
-@register.filter
+
+@register.simple_tag
 def bitcoin_qrcode_url(address, amount=0):
     qr_text = get_qr_text(address, amount)
     return reverse('qrcode', args=(qr_text,))
