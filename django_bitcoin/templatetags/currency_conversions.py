@@ -86,12 +86,12 @@ def wallet_tagline(wallet):
 
 
 @register.inclusion_tag('bitcoin_payment_qr.html')
-def bitcoin_payment_qr(address, amount=Decimal("0"), description='', display_currency=''):
+def bitcoin_payment_qr(address, amount=Decimal("0"), description='', display_currency='', size=4):
     currency_amount=Decimal(0)
     if display_currency:
         currency_amount=(Decimal(amount)*currency.exchange.get_rate(display_currency)).quantize(Decimal("0.01"))
 
-    address_qrcode = bitcoin_qrcode_url(address, amount)
+    address_qrcode = bitcoin_qrcode_url(address, amount, size)
     return {'address': address, 
             'address_qrcode': address_qrcode,
             'amount': amount, 
@@ -102,9 +102,9 @@ def bitcoin_payment_qr(address, amount=Decimal("0"), description='', display_cur
 
 
 @register.simple_tag
-def bitcoin_qrcode_url(address, amount=0):
+def bitcoin_qrcode_url(address, amount=0, size=4):
     qr_text = get_qr_text(address, amount)
-    return reverse('qrcode', args=(qr_text,))
+    return reverse('qrcode', args=(qr_text, size))
 
 
 def get_qr_text(address, amount=0):
