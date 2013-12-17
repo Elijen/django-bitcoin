@@ -107,6 +107,7 @@ def bitcoin_qrcode_url(address, amount=0, size=4, protocol="bitcoin"):
     return reverse('qrcode', args=(qr_text, size))
 
 
+@register.simple_tag(name="bitcoin_url")
 def get_qr_text(address, amount=0, protocol="bitcoin"):
     qr_text = protocol + ":" + address
     if amount > 0:
