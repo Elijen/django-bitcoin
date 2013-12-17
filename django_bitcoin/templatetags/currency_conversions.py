@@ -102,13 +102,13 @@ def bitcoin_payment_qr(address, amount=Decimal("0"), description='', display_cur
 
 
 @register.simple_tag
-def bitcoin_qrcode_url(address, amount=0, size=4):
-    qr_text = get_qr_text(address, amount)
+def bitcoin_qrcode_url(address, amount=0, size=4, protocol="bitcoin"):
+    qr_text = get_qr_text(address, amount, protocol)
     return reverse('qrcode', args=(qr_text, size))
 
 
-def get_qr_text(address, amount=0):
-    qr_text = "bitcoin:" + address
+def get_qr_text(address, amount=0, protocol="bitcoin"):
+    qr_text = protocol + ":" + address
     if amount > 0:
         qr_text += "?amount=" + str(amount)
 
